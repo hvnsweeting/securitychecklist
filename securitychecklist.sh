@@ -68,8 +68,13 @@ fi
 
 # TODO so slow
 printf 'Is the server certificate at least 4096 bits?\n'
-if [ $(openssl s_client -showcerts -connect $domain:443 |& grep '^Server public key' | grep -Eo '\d+') -ge 4096 ]; then
-    say_yes
+bits="$(openssl s_client -showcerts -connect $domain:443 2>&1 | grep '^Server public key' | grep -Eo '\d+')"
+if [ ! -z $bits ]; then
+    if [ $bits -ge 4096 ]; then
+        say_yes
+    else
+        say_no
+    fi
 else
     say_no
 fi
