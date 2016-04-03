@@ -14,10 +14,14 @@ function say_no {
     printf -- '---> No\n'
     printf '=================\n'
 }
+if ! ( curl -LI $HTTPS | grep '^HTTP.* 20' ); then
+    printf "Site $domain does not support HTTPS. Exiting...\n"
+    exit 1
+fi
 
 printf 'Is the website only served over https?\n'
-if ( curl -s -I $HTTP | grep '^HTTP' | grep 30 ); then
-    if ( curl -s -I $HTTPS | grep '^HTTP' | grep 200 ); then
+if ( curl -s -I $HTTP | grep '^HTTP.* 30'); then
+    if ( curl -sLI $HTTPS | grep '^HTTP.* 200'); then
         say_yes
     else
         say_no
